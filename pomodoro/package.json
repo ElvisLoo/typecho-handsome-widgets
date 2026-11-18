@@ -1,0 +1,10 @@
+{
+  "name": "handsome-pomodoro-widget",
+  "version": "2.1.3",
+  "private": true,
+  "description": "Typecho Handsome 侧栏番茄钟控件（零依赖、纯前端、可 Node 测试的纯函数核心）",
+  "scripts": {
+    "test": "node --test"
+  },
+  "license": "MIT"
+}

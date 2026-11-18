@@ -1,0 +1,199 @@
+/* Handsome Pomodoro Widget — 样式
+   默认白底 + grass 绿（跟随 Handsome），计时区深色呼应作者同款黑卡片；
+   .jgpm-dark 或 html.theme-dark 时整体转深色。所有选择器带 #jgpm-root 前缀，不污染主题。 */
+
+#jgpm-root.jgpm {
+    --jgpm-bg: #ffffff;
+    --jgpm-fg: #3a4148;
+    --jgpm-muted: #98a0a6;
+    --jgpm-line: #edf1f2;
+    --jgpm-green: #487054;
+    --jgpm-green-soft: #eef4ef;
+    --jgpm-dial-bg: #eef1f2;
+    --jgpm-timer-bg: #20262a;
+    --jgpm-timer-fg: #f4f6f7;
+    --jgpm-shadow: 0 6px 24px rgba(30, 40, 45, .13);
+    position: fixed;
+    right: 22px;
+    bottom: 22px;
+    z-index: 1050;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+    font-size: 13px;
+    color: var(--jgpm-fg);
+    -webkit-font-smoothing: antialiased;
+}
+
+#jgpm-root.jgpm-dark {
+    --jgpm-bg: #23282c;
+    --jgpm-fg: #dfe4e7;
+    --jgpm-muted: #89949a;
+    --jgpm-line: #343b40;
+    --jgpm-green: #7bb68f;
+    --jgpm-green-soft: #2c3831;
+    --jgpm-dial-bg: #3a4247;
+    --jgpm-timer-bg: #15191c;
+    --jgpm-timer-fg: #f4f6f7;
+    --jgpm-shadow: 0 8px 28px rgba(0, 0, 0, .38);
+}
+
+html.theme-dark #jgpm-root.jgpm:not(.jgpm-light-force) {
+    --jgpm-bg: #23282c;
+    --jgpm-fg: #dfe4e7;
+    --jgpm-muted: #89949a;
+    --jgpm-line: #343b40;
+    --jgpm-green: #7bb68f;
+    --jgpm-green-soft: #2c3831;
+    --jgpm-dial-bg: #3a4247;
+    --jgpm-timer-bg: #15191c;
+    --jgpm-timer-fg: #f4f6f7;
+    --jgpm-shadow: 0 8px 28px rgba(0, 0, 0, .38);
+}
+
+#jgpm-root * { box-sizing: border-box; }
+#jgpm-root button { font-family: inherit; cursor: pointer; border: 0; background: none; color: inherit; }
+#jgpm-root button:focus-visible { outline: 2px solid var(--jgpm-green); outline-offset: 2px; }
+
+/* 悬浮按钮 */
+#jgpm-root .jgpm-fab {
+    position: relative;
+    display: block;
+    width: 54px;
+    height: 54px;
+    margin-left: auto;
+    border-radius: 50%;
+    background: var(--jgpm-bg);
+    box-shadow: var(--jgpm-shadow);
+    border: 1px solid var(--jgpm-line);
+    transition: transform .18s ease;
+}
+#jgpm-root .jgpm-fab:hover { transform: translateY(-2px); }
+#jgpm-root .jgpm-fab-ring {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    transform: rotate(-90deg); pointer-events: none;
+}
+#jgpm-root .jgpm-fab-ring-bg { fill: none; stroke: var(--jgpm-dial-bg); stroke-width: 6; }
+#jgpm-root .jgpm-fab-ring-fg {
+    fill: none; stroke: var(--jgpm-green); stroke-width: 6; stroke-linecap: round;
+    stroke-dasharray: 326.7; stroke-dashoffset: 326.7;
+    transition: stroke-dashoffset .4s linear;
+}
+#jgpm-root .jgpm-fab-face {
+    position: absolute; inset: 0; display: flex; align-items: center; justify-content: center;
+    font-size: 23px; line-height: 1;
+}
+#jgpm-root.jgpm-running .jgpm-fab-face { font-size: 17px; }
+#jgpm-root .jgpm-fab-time {
+    position: absolute; left: 0; right: 0; bottom: 9px; text-align: center;
+    font-size: 9px; font-weight: 700; color: var(--jgpm-green);
+    opacity: 0; transition: opacity .2s;
+}
+#jgpm-root.jgpm-running .jgpm-fab-time { opacity: 1; }
+
+/* 面板 */
+#jgpm-root .jgpm-panel {
+    width: 288px;
+    margin-bottom: 12px;
+    background: var(--jgpm-bg);
+    border: 1px solid var(--jgpm-line);
+    border-radius: 8px;
+    box-shadow: var(--jgpm-shadow);
+    overflow: hidden;
+    animation: jgpm-in .18s ease-out;
+}
+#jgpm-root .jgpm-panel[hidden] { display: none; }
+@keyframes jgpm-in { from { opacity: 0; transform: translateY(8px) scale(.98); } to { opacity: 1; transform: none; } }
+
+#jgpm-root .jgpm-head {
+    display: flex; align-items: center; gap: 6px;
+    padding: 10px 12px; border-bottom: 1px solid var(--jgpm-line);
+}
+#jgpm-root .jgpm-title { font-size: 13px; font-weight: 700; color: var(--jgpm-green); margin-right: auto; }
+#jgpm-root .jgpm-tabs { display: flex; background: var(--jgpm-green-soft); border-radius: 5px; padding: 2px; }
+#jgpm-root .jgpm-tab { font-size: 11px; padding: 3px 7px; border-radius: 4px; color: var(--jgpm-muted); }
+#jgpm-root .jgpm-tab.on { background: var(--jgpm-bg); color: var(--jgpm-green); font-weight: 700; box-shadow: 0 1px 2px rgba(0,0,0,.06); }
+#jgpm-root .jgpm-icon { font-size: 15px; color: var(--jgpm-muted); width: 20px; height: 20px; line-height: 1; }
+#jgpm-root .jgpm-icon:hover { color: var(--jgpm-green); }
+
+#jgpm-root .jgpm-view { padding: 14px 14px 10px; }
+#jgpm-root .jgpm-view[hidden] { display: none; }
+
+/* 计时区（深色块） */
+#jgpm-root .jgpm-timer {
+    position: relative; width: 154px; height: 154px; margin: 0 auto 12px;
+    border-radius: 50%; background: var(--jgpm-timer-bg);
+}
+#jgpm-root .jgpm-dial { position: absolute; inset: 0; width: 100%; height: 100%; transform: rotate(-90deg); }
+#jgpm-root .jgpm-dial-bg { fill: none; stroke: rgba(255,255,255,.10); stroke-width: 5; }
+#jgpm-root .jgpm-dial-fg {
+    fill: none; stroke: #7bb68f; stroke-width: 5; stroke-linecap: round;
+    stroke-dasharray: 326.7; stroke-dashoffset: 326.7;
+    transition: stroke-dashoffset .4s linear;
+}
+#jgpm-root.jgpm-break .jgpm-dial-fg { stroke: #e2b86b; }
+#jgpm-root .jgpm-timer-center {
+    position: absolute; inset: 0; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; color: var(--jgpm-timer-fg);
+}
+#jgpm-root .jgpm-mode { font-size: 11px; opacity: .7; letter-spacing: .5px; }
+#jgpm-root .jgpm-clock { font-size: 30px; font-weight: 300; letter-spacing: 1px; font-variant-numeric: tabular-nums; margin: 2px 0; }
+#jgpm-root .jgpm-sub { font-size: 10px; opacity: .55; }
+
+#jgpm-root .jgpm-actions { display: flex; gap: 6px; margin-bottom: 12px; }
+#jgpm-root .jgpm-actions button {
+    flex: 1; padding: 7px 0; font-size: 12px; border-radius: 5px;
+    background: var(--jgpm-green-soft); color: var(--jgpm-fg);
+}
+#jgpm-root .jgpm-actions button:hover { filter: brightness(.96); }
+#jgpm-root .jgpm-actions .jgpm-primary { background: var(--jgpm-green); color: #fff; font-weight: 700; }
+#jgpm-root .jgpm-primary { background: var(--jgpm-green); color: #fff; }
+
+/* 三格统计 */
+#jgpm-root .jgpm-metrics {
+    display: flex; border-top: 1px solid var(--jgpm-line); padding-top: 10px;
+}
+#jgpm-root .jgpm-metric { flex: 1; text-align: center; display: flex; flex-direction: column; gap: 3px; }
+#jgpm-root .jgpm-metric + .jgpm-metric { border-left: 1px solid var(--jgpm-line); }
+#jgpm-root .jgpm-metric span { font-size: 10px; color: var(--jgpm-muted); }
+#jgpm-root .jgpm-metric b { font-size: 14px; font-weight: 700; color: var(--jgpm-fg); font-variant-numeric: tabular-nums; }
+
+/* 周视图 */
+#jgpm-root .jgpm-week-head { font-size: 12px; color: var(--jgpm-muted); margin-bottom: 10px; }
+#jgpm-root .jgpm-week-head b { color: var(--jgpm-green); font-size: 14px; }
+#jgpm-root .jgpm-bars { display: flex; align-items: flex-end; justify-content: space-between; height: 104px; }
+#jgpm-root .jgpm-bar-col { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; height: 100%; gap: 3px; }
+#jgpm-root .jgpm-bar-val { font-size: 9px; color: var(--jgpm-muted); height: 12px; }
+#jgpm-root .jgpm-bar { width: 16px; border-radius: 3px 3px 0 0; background: var(--jgpm-green-soft); border: 1px solid var(--jgpm-line); transition: height .3s; }
+#jgpm-root .jgpm-bar-col.today .jgpm-bar { background: var(--jgpm-green); border-color: var(--jgpm-green); }
+#jgpm-root .jgpm-bar-lab { font-size: 10px; color: var(--jgpm-muted); }
+#jgpm-root .jgpm-bar-col.today .jgpm-bar-lab { color: var(--jgpm-green); font-weight: 700; }
+#jgpm-root .jgpm-week-foot { margin-top: 10px; text-align: center; font-size: 10px; color: var(--jgpm-muted); }
+
+#jgpm-root .jgpm-foot {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 8px 12px; border-top: 1px solid var(--jgpm-line);
+    font-size: 10px; color: var(--jgpm-muted);
+}
+#jgpm-root .jgpm-link { font-size: 10px; color: var(--jgpm-green); }
+#jgpm-root .jgpm-settings { padding: 10px 14px 14px; border-top: 1px solid var(--jgpm-line); display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+#jgpm-root .jgpm-settings[hidden] { display: none; }
+#jgpm-root .jgpm-settings label { font-size: 11px; color: var(--jgpm-muted); display: flex; align-items: center; gap: 4px; }
+#jgpm-root .jgpm-settings input[type=number] {
+    width: 46px; padding: 3px 4px; font-size: 11px; border: 1px solid var(--jgpm-line);
+    border-radius: 4px; background: var(--jgpm-bg); color: var(--jgpm-fg);
+}
+#jgpm-root .jgpm-settings .jgpm-check { grid-column: 1 / -1; gap: 6px; }
+#jgpm-root .jgpm-settings .jgpm-primary { grid-column: 1 / -1; padding: 6px; border-radius: 5px; font-size: 12px; }
+/* v2.2.0：通知未授权时出现的次级链接按钮 */
+#jgpm-root .jgpm-settings .jgpm-notify-btn { grid-column: 1 / -1; padding: 3px 0; background: transparent; text-align: center; }
+#jgpm-root .jgpm-settings .jgpm-notify-btn[hidden] { display: none; }
+
+@media (max-width: 767px) {
+    #jgpm-root.jgpm { right: 12px; bottom: 12px; }
+    #jgpm-root .jgpm-fab { width: 46px; height: 46px; }
+    #jgpm-root .jgpm-panel { width: min(288px, calc(100vw - 24px)); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #jgpm-root * { animation: none !important; transition: none !important; }
+}
+

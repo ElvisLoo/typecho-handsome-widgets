@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<!--
+  极客港 · 侧栏番茄钟 演示页
+  直接双击用浏览器打开即可（无需服务器、无网络请求）。
+  真实环境里控件挂在 Handsome 主题的 #sidebar 内，这里用一个同名的空容器模拟。
+-->
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>侧栏番茄钟 · 演示</title>
+<link rel="stylesheet" href="sidebar-pomodoro.css">
+<style>
+    :root { --bg-main: #f4f6f5; --text-color: #4d5852; }
+    html.theme-dark { --bg-main: #23282c; --text-color: #dfe4e7; }
+    * { box-sizing: border-box; }
+    body {
+        margin: 0; padding: 24px;
+        background: var(--bg-main); color: var(--text-color);
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        transition: background .3s, color .3s;
+    }
+    .wrap { display: flex; gap: 24px; align-items: flex-start; max-width: 900px; margin: 0 auto; }
+    #sidebar {
+        flex: 0 0 320px; min-height: 200px;
+        background: #fff; border-radius: 6px; padding: 10px;
+        box-shadow: 0 1px 3px rgba(0,0,0,.06);
+    }
+    html.theme-dark #sidebar { background: #2b3136; }
+    .tip { flex: 1; font-size: 13px; line-height: 1.9; }
+    .tip h1 { font-size: 18px; margin: 0 0 10px; }
+    .tip button {
+        padding: 4px 12px; margin-right: 8px; margin-bottom: 8px;
+        border: 1px solid #d5ddd8; border-radius: 4px; background: #fff; color: inherit; cursor: pointer;
+    }
+    code { background: rgba(127,168,139,.14); padding: 1px 5px; border-radius: 3px; }
+</style>
+</head>
+<body>
+<div class="wrap">
+    <div id="sidebar"><!-- 番茄钟会挂到这里 --></div>
+    <div class="tip">
+        <h1>侧栏番茄钟 v2.1.3 演示</h1>
+        <p>
+            <button type="button" id="toggle-theme">切换暗色模式</button>
+            <button type="button" id="clear-data">清空本机数据</button>
+        </p>
+        <p>数据只存在这台设备的 <code>localStorage</code>（键 <code>jgSidebarPomo.v2</code>），刷新页面计时状态不丢。</p>
+        <p>想模拟老用户升级：点「清空本机数据」后，在控制台执行下面这段写入 v1 旧数据，再刷新页面，时长设置与历史会被自动迁移：</p>
+        <p><code>localStorage.setItem('jgPomodoro.v1', JSON.stringify({settings:{focus:40,short:8,long:20,cycle:3},history:{'2026-11-18':{minutes:80,pomodoros:2,breaks:1}}}))</code></p>
+        <p>核心逻辑测试：仓库根目录执行 <code>npm test</code>（即 <code>node --test tests/</code>）。</p>
+    </div>
+</div>
+<script src="sidebar-pomodoro.js"></script>
+<script>
+    document.getElementById('toggle-theme').onclick = function () {
+        document.documentElement.classList.toggle('theme-dark');
+    };
+    document.getElementById('clear-data').onclick = function () {
+        localStorage.removeItem('jgSidebarPomo.v2');
+        localStorage.removeItem('jgPomodoro.v1');
+        location.reload();
+    };
+</script>
+</body>
+</html>

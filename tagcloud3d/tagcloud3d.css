@@ -1,0 +1,162 @@
+@charset "utf-8";
+/* JG-TAGCLOUD-v2-start
+   极客港 · 侧栏「标签」3D 球挂件 v2.2.1
+   与天气卡 / 番茄钟同一套 Handsome 白底绿系 widget：顶部渐变细条 + 圆角卡 + 悬停只提升阴影。
+   标签为「纯文字」形态（经典 3D 词球）：无底色无边框，靠字号 + 颜色深浅做热度三级分级，
+   重叠时读作词云而非卡片堆叠；hover 只变色不位移。
+   v2.1.0：文件编码由「UTF-8 内容被二次编码成乱码」修正为 UTF-8（原注释在浏览器里不可读）。
+   v2.2.0：新增挂载入场动画与 reduced-motion 开关。
+   v2.2.1：修入场动画声明缺右括号导致动画不生效。 */
+
+.jg-tagcloud {
+    --jgtc-fg: #4d5852;
+    --jgtc-muted: #9aa8a0;
+    position: relative;
+    margin-bottom: 18px;
+    padding: 16px 14px 10px !important;
+    border-radius: 6px;
+    color: var(--text-color, #666);
+    font-size: 13px;
+    line-height: 1.5;
+    overflow: hidden;
+    transition: box-shadow .3s ease;
+    transform: translateZ(0);
+}
+.jg-tagcloud:hover { box-shadow: 0 6px 18px rgba(60, 80, 66, .10); }
+.jg-tagcloud::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 2px;
+    background: linear-gradient(90deg, #7fa88b, #b9d3bf, #7fa88b);
+    background-size: 200% 100%;
+    animation: jgtc-bar 9s linear infinite;
+}
+@keyframes jgtc-bar { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
+
+/* ---------- 标题栏 ---------- */
+.jg-tagcloud > h5.widget-title {
+    display: flex;
+    align-items: center;
+    margin: 0 0 6px !important;
+    padding: 0 !important;
+    font-size: 14px;
+    font-weight: 600;
+    color: #487054;
+    border: 0 !important;
+}
+.jg-tagcloud .jgtc-count {
+    margin-left: 8px;
+    padding: 1px 8px;
+    border-radius: 10px;
+    background: rgba(90, 123, 99, .10);
+    color: #5a7b63;
+    font-size: 11px;
+    font-weight: 400;
+    line-height: 18px;
+}
+.jg-tagcloud .jgtc-rot {
+    margin-left: auto;
+    width: 24px; height: 24px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    color: #a8b5ac;
+    cursor: pointer;
+    line-height: 0;
+    transition: color .2s, background .2s;
+}
+.jg-tagcloud .jgtc-rot:hover { color: #487054; background: rgba(90, 123, 99, .10); }
+.jg-tagcloud .jgtc-rot:focus-visible { outline: 2px solid #7fa88b; outline-offset: 2px; }
+.jg-tagcloud .jgtc-rot svg { fill: currentColor; vertical-align: middle; }
+.jg-tagcloud .jgtc-rot .jgtc-ic-play { display: none; }
+.jg-tagcloud .jgtc-rot.is-paused .jgtc-ic-pause { display: none; }
+.jg-tagcloud .jgtc-rot.is-paused .jgtc-ic-play { display: inline; }
+
+/* ---------- 3D 词球舞台 ---------- */
+.jg-tagcloud .jgtc-stage {
+    position: relative;
+    overflow: hidden;
+    cursor: grab;
+    -webkit-user-select: none;
+    user-select: none;
+    /* 触屏拖拽球体时不要顺势滚动页面 */
+    touch-action: none;
+    -webkit-tap-highlight-color: transparent;
+    /* 贴边文字柔化淡出，像转到球背面，而不是被硬切 */
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 70%, transparent 100%);
+            mask-image: radial-gradient(circle at 50% 50%, #000 70%, transparent 100%);
+}
+.jg-tagcloud .jgtc-stage.is-grabbing { cursor: grabbing; }
+/* 挂载入场：只动舞台容器（标签的 transform/opacity 由 JS 逐帧写，加动画会被覆盖） */
+.jg-tagcloud.jgtc-enter .jgtc-stage { animation: jgtc-stage-in .65s cubic-bezier(.22,.61,.36,1) both; }
+@keyframes jgtc-stage-in {
+    from { opacity: 0; transform: scale(.94); }
+    to   { opacity: 1; transform: scale(1); }
+}
+.jg-tagcloud .jgtc-ball { position: absolute; left: 0; top: 0; right: 0; bottom: 0; }
+
+.jg-tagcloud .jgtc-label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    display: block;
+    max-width: 96%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    padding: 1px 2px;
+    white-space: nowrap;
+    text-decoration: none;
+    transform-origin: center center;
+    backface-visibility: hidden;
+    will-change: transform, opacity;
+    transition: color .18s ease;
+    /* 白底上给文字一点底部高光，重叠时更清晰 */
+    text-shadow: 0 1px 0 rgba(255, 255, 255, .75);
+}
+.jg-tagcloud .jgtc-label:hover,
+.jg-tagcloud .jgtc-label:focus { text-decoration: underline; outline: none; }
+
+/* 冷（出现最多的一档）：最浅最小 */
+.jg-tagcloud .jgtc-label.jgtc-cool { color: #93a29a; font-size: 9.5px; font-weight: 400; }
+.jg-tagcloud .jgtc-label.jgtc-cool:hover { color: #5f7a68; }
+/* 温：中绿 */
+.jg-tagcloud .jgtc-label.jgtc-warm { color: #4c8a67; font-size: 11px; font-weight: 500; }
+.jg-tagcloud .jgtc-label.jgtc-warm:hover { color: #366b4c; }
+/* 热：最深最大 */
+.jg-tagcloud .jgtc-label.jgtc-hot { color: #2e6b47; font-size: 12.5px; font-weight: 600; }
+.jg-tagcloud .jgtc-label.jgtc-hot:hover { color: #1f5236; }
+
+/* ---------- 暗色模式（Handsome 固定在 <html> 上加 .theme-dark） ---------- */
+html.theme-dark .jg-tagcloud { --jgtc-fg: #dde5df; --jgtc-muted: #8c9a91; }
+html.theme-dark .jg-tagcloud::before {
+    background: linear-gradient(90deg, #3f6b52, #6fa383, #3f6b52);
+    background-size: 200% 100%;
+}
+html.theme-dark .jg-tagcloud > h5.widget-title { color: #8fbf9c; }
+html.theme-dark .jg-tagcloud .jgtc-count { background: rgba(143, 191, 156, .14); color: #9ccbab; }
+html.theme-dark .jg-tagcloud .jgtc-rot { color: #7d8b82; }
+html.theme-dark .jg-tagcloud .jgtc-rot:hover { color: #8fca9f; background: rgba(143, 191, 156, .14); }
+html.theme-dark .jg-tagcloud .jgtc-stage {
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 70%, transparent 100%);
+            mask-image: radial-gradient(circle at 50% 50%, #000 70%, transparent 100%);
+}
+html.theme-dark .jg-tagcloud .jgtc-label { text-shadow: 0 1px 0 rgba(0, 0, 0, .45); }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-cool { color: #6f7d74; }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-cool:hover { color: #9fb7a8; }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-warm { color: #7fbf97; }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-warm:hover { color: #a2dab8; }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-hot { color: #a7ddbb; }
+html.theme-dark .jg-tagcloud .jgtc-label.jgtc-hot:hover { color: #c6efd5; }
+
+/* 侧栏折叠（只留图标）时不显示 */
+.app-aside-folded .jg-tagcloud { display: none !important; }
+
+/* 尊重系统的「减少动态效果」 */
+@media (prefers-reduced-motion: reduce) {
+    .jg-tagcloud,
+    .jg-tagcloud:hover { transition: none; }
+    .jg-tagcloud::before { animation: none; }
+    .jg-tagcloud .jgtc-label { transition: none; }
+    .jg-tagcloud.jgtc-enter .jgtc-stage { animation: none; }
+}
+/* JG-TAGCLOUD-v2-end */
